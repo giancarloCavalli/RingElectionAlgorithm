@@ -1,3 +1,7 @@
+/*
+ * Authors: Eduarda Engels, Giancarlo Cavalli & Gustavo Soares
+ */
+
 package models;
 
 import java.util.Objects;

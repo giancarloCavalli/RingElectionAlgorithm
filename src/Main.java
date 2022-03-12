@@ -1,3 +1,7 @@
+/*
+ * Authors: Eduarda Engels, Giancarlo Cavalli & Gustavo Soares
+ */
+
 import models.Ring;
 
 public class Main {
