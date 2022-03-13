@@ -14,6 +14,11 @@ public class Ring {
 	private boolean election;
 	private Process coordinator;
 	private long processId = 1;
+	
+	private final int CREATE_INTERVAL_SECONDS = 30;
+	private final int DISABLE_INTERVAL_SECONDS = 80;
+	private final int DISABLE_COORDINATOR_INTERVAL_SECONDS = 100;
+	private final int SEND_REQUEST_INTERVAL_SECONDS = 25;
 
 	public Ring() {
 	}
@@ -43,7 +48,7 @@ public class Ring {
 					System.out.println("Process " + p.getId() + " created.");
 
 					try {
-						Thread.sleep(30000);
+						Thread.sleep(CREATE_INTERVAL_SECONDS * 1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -66,7 +71,7 @@ public class Ring {
 					System.out.println("Process " + p.getId() + " disabled.");
 
 					try {
-						Thread.sleep(80000);
+						Thread.sleep(DISABLE_INTERVAL_SECONDS * 1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -91,7 +96,7 @@ public class Ring {
 						System.out.println("Coordinator disabled. (id " + id);
 					}
 					try {
-						Thread.sleep(100000);
+						Thread.sleep(DISABLE_COORDINATOR_INTERVAL_SECONDS * 1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -116,7 +121,7 @@ public class Ring {
 					}
 
 					try {
-						Thread.sleep(25000);
+						Thread.sleep(SEND_REQUEST_INTERVAL_SECONDS * 1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
