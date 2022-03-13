@@ -6,7 +6,7 @@ package models;
 
 import java.util.Objects;
 
-public class Process {
+public class Process implements Comparable<Process> {
 
 	private long id;
 	private boolean coordinator;
@@ -63,6 +63,27 @@ public class Process {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	@Override
+	public int compareTo(Process o) {
+		if (this.id > o.id)
+			return 1;
+		
+		if (this.id < o.id)
+			return -1;
+		
+		return 0;
+	}
+	
+	public static Process higherOf(Process process1, Process process2) {
+		if (process1.compareTo(process2) == 1)
+			return process1;
+		
+		if (process1.compareTo(process2) == -1)
+			return process2;
+		
+		return process1;
 	}
 
 }
