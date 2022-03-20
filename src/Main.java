@@ -12,5 +12,7 @@ public class Main {
 		
 		ring.createProcess();
 		ring.disableProcess();
+		ring.disableCoordinator();
+		ring.sendRequest();
 	}
 }

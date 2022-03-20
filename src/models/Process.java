@@ -18,18 +18,18 @@ public class Process implements Comparable<Process> {
 
 	public boolean sendRequisition(Process coordinator) {
 		try {
-			System.out.println("Request sent by process " + this.getId());
+			System.out.println("Request sent by process " + this.getId()+ ".");
 			coordinator.getRequisition(this.getId());
 
 		} catch (NullPointerException npe) {
-			System.out.println("Coordinator timed out");
+			System.out.println("Coordinator timed out.");
 			return false;
 		}
 		return true;
 	}
 
 	public void getRequisition(long id) {
-		System.out.println("Request from process id " + id + " received by process id " + this.getId());
+		System.out.println("Request from process id " + id + " received by process id " + this.getId()+ ".");
 	}
 
 	public boolean isCoordinator() {
@@ -66,11 +66,11 @@ public class Process implements Comparable<Process> {
 	}
 
 	@Override
-	public int compareTo(Process o) {
-		if (this.id > o.id)
+	public int compareTo(Process p) {
+		if (this.id > p.id)
 			return 1;
 		
-		if (this.id < o.id)
+		if (this.id < p.id)
 			return -1;
 		
 		return 0;
