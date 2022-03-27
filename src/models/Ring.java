@@ -16,10 +16,10 @@ public class Ring {
 	private Process coordinator;
 	private long processId = 1;
 
-	private final int CREATE_INTERVAL_SECONDS = 15; // 30
-	private final int DISABLE_INTERVAL_SECONDS = 40; // 80
-	private final int DISABLE_COORDINATOR_INTERVAL_SECONDS = 50; // 100
-	private final int SEND_REQUEST_INTERVAL_SECONDS = 12; // 25
+	private final int CREATE_INTERVAL_SECONDS = 15;
+	private final int DISABLE_INTERVAL_SECONDS = 40;
+	private final int DISABLE_COORDINATOR_INTERVAL_SECONDS = 50;
+	private final int SEND_REQUEST_INTERVAL_SECONDS = 12;
 
 	public Ring() {
 	}
@@ -36,18 +36,18 @@ public class Ring {
 			public void run() {
 
 				while (true) {
-					Process p;
+					Process process;
 
 					if (getProcesses().isEmpty()) {
-						p = new Process(processId);
-						setCoordinator(p);
+						process = new Process(processId);
+						setCoordinator(process);
 					} else {
-						p = new Process(processId);
+						process = new Process(processId);
 					}
 
-					getProcesses().add(p);
+					getProcesses().add(process);
 					processId++;
-					System.out.println("Process " + p.getId() + " created.");
+					System.out.println("Process " + process.getId() + " created.");
 
 					try {
 						Thread.sleep(CREATE_INTERVAL_SECONDS * 1000);
@@ -73,15 +73,15 @@ public class Ring {
 						e.printStackTrace();
 					}
 
-					Process p = getRandomProcess();
+					Process process = getRandomProcess();
 
-					getProcesses().remove(p);
+					getProcesses().remove(process);
 
-					if (isCoordinator(p)) {
+					if (getCoordinator() != null && isCoordinator(process)) {
 						setCoordinator(null);
 					}
 
-					System.out.println("Process " + p.getId() + " disabled.");
+					System.out.println("Process " + process.getId() + " disabled.");
 				}
 			}
 		}) {
@@ -127,12 +127,12 @@ public class Ring {
 						e.printStackTrace();
 					}
 
-					Process p = getCommonProcess();
+					Process process = getCommonProcess();
 
-					boolean successful = p.sendRequisition(getCoordinator());
+					boolean successful = process.sendRequisition(getCoordinator());
 
 					if (!successful) {
-						startElection(p.getId());
+						startElection(process.getId());
 					}
 				}
 			}
@@ -150,8 +150,8 @@ public class Ring {
 
 				Process coordinator = getProcessById(processId);
 
-				for (Process p : getProcesses()) {
-					coordinator = Process.higherOf(coordinator, p);
+				for (Process process : getProcesses()) {
+					coordinator = Process.higherOf(coordinator, process);
 				}
 
 				setCoordinator(coordinator);
@@ -185,22 +185,22 @@ public class Ring {
 	}
 
 	private Process getCommonProcess() {
-		Process p;
+		Process process;
 
 		do {
-			p = getRandomProcess();
+			process = getRandomProcess();
 
-		} while (p.equals(getCoordinator()));
+		} while (process.equals(getCoordinator()));
 
-		return p;
+		return process;
 	}
 
 	private Process getRandomProcess() {
 		Random rd = new Random();
 		int random = rd.nextInt(getProcesses().size());
-		Process p = getProcesses().get(random);
+		Process process = getProcesses().get(random);
 
-		return p;
+		return process;
 	}
 
 	public List<Process> getProcesses() {

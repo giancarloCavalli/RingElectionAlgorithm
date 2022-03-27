@@ -62,12 +62,12 @@ public class Process implements Comparable<Process> {
 	}
 
 	@Override
-	public int compareTo(Process p) {
-		if (this.id > p.id) {
+	public int compareTo(Process process) {
+		if (this.id > process.id) {
 			return 1;
 		}
 
-		if (this.id < p.id) {
+		if (this.id < process.id) {
 			return -1;
 		}
 
