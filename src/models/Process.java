@@ -9,16 +9,14 @@ import java.util.Objects;
 public class Process implements Comparable<Process> {
 
 	private long id;
-	private boolean coordinator;
 
-	public Process(long id, boolean coordinator) {
+	public Process(long id) {
 		this.setId(id);
-		this.setCoordinator(coordinator);
 	}
 
 	public boolean sendRequisition(Process coordinator) {
 		try {
-			System.out.println("Request sent by process " + this.getId()+ ".");
+			System.out.println("Request sent by process " + this.getId() + ".");
 			coordinator.getRequisition(this.getId());
 
 		} catch (NullPointerException npe) {
@@ -29,11 +27,7 @@ public class Process implements Comparable<Process> {
 	}
 
 	public void getRequisition(long id) {
-		System.out.println("Request from process id " + id + " received by process id " + this.getId()+ ".");
-	}
-
-	public boolean isCoordinator() {
-		return coordinator;
+		System.out.println("Request from process id " + id + " received by process id " + this.getId() + ".");
 	}
 
 	@Override
@@ -43,18 +37,20 @@ public class Process implements Comparable<Process> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
+
 		Process other = (Process) obj;
 		return id == other.id;
-	}
-
-	public void setCoordinator(boolean coordinator) {
-		this.coordinator = coordinator;
 	}
 
 	public long getId() {
@@ -67,22 +63,26 @@ public class Process implements Comparable<Process> {
 
 	@Override
 	public int compareTo(Process p) {
-		if (this.id > p.id)
+		if (this.id > p.id) {
 			return 1;
-		
-		if (this.id < p.id)
+		}
+
+		if (this.id < p.id) {
 			return -1;
-		
+		}
+
 		return 0;
 	}
-	
+
 	public static Process higherOf(Process process1, Process process2) {
-		if (process1.compareTo(process2) == 1)
+		if (process1.compareTo(process2) == 1) {
 			return process1;
-		
-		if (process1.compareTo(process2) == -1)
+		}
+
+		if (process1.compareTo(process2) == -1) {
 			return process2;
-		
+		}
+
 		return process1;
 	}
 

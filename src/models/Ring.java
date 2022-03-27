@@ -4,21 +4,22 @@
 
 package models;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 public class Ring {
 
-	private List<Process> processes = new LinkedList<>();
+	private List<Process> processes = Collections.synchronizedList(new LinkedList<Process>());
 	private boolean election;
 	private Process coordinator;
 	private long processId = 1;
 
-	private final int CREATE_INTERVAL_SECONDS = 30;
-	private final int DISABLE_INTERVAL_SECONDS = 80;
-	private final int DISABLE_COORDINATOR_INTERVAL_SECONDS = 100;
-	private final int SEND_REQUEST_INTERVAL_SECONDS = 25;
+	private final int CREATE_INTERVAL_SECONDS = 15; // 30
+	private final int DISABLE_INTERVAL_SECONDS = 40; // 80
+	private final int DISABLE_COORDINATOR_INTERVAL_SECONDS = 50; // 100
+	private final int SEND_REQUEST_INTERVAL_SECONDS = 12; // 25
 
 	public Ring() {
 	}
@@ -28,22 +29,23 @@ public class Ring {
 		this.setCoordinator(coordinator);
 	}
 
-	public void createProcess() {
+	public synchronized void createProcess() {
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
+
 				while (true) {
 					Process p;
 
-					if (processes.isEmpty()) {
-						p = new Process(processId, true);
+					if (getProcesses().isEmpty()) {
+						p = new Process(processId);
 						setCoordinator(p);
 					} else {
-						p = new Process(processId, false);
+						p = new Process(processId);
 					}
 
-					processes.add(p);
+					getProcesses().add(p);
 					processId++;
 					System.out.println("Process " + p.getId() + " created.");
 
@@ -58,7 +60,7 @@ public class Ring {
 		}.start();
 	}
 
-	public void disableProcess() {
+	public synchronized void disableProcess() {
 		new Thread(new Runnable() {
 
 			@Override
@@ -75,7 +77,7 @@ public class Ring {
 
 					getProcesses().remove(p);
 
-					if(p.isCoordinator()) {
+					if (isCoordinator(p)) {
 						setCoordinator(null);
 					}
 
@@ -86,7 +88,7 @@ public class Ring {
 		}.start();
 	}
 
-	public void disableCoordinator() {
+	public synchronized void disableCoordinator() {
 		new Thread(new Runnable() {
 
 			@Override
@@ -112,7 +114,7 @@ public class Ring {
 		}.start();
 	}
 
-	public void sendRequest() {
+	public synchronized void sendRequest() {
 		new Thread(new Runnable() {
 
 			@Override
@@ -138,8 +140,8 @@ public class Ring {
 		}.start();
 	}
 
-	public void startElection(long processId) {
-		System.out.println("Election started by process id " + processId + ".");
+	public synchronized void startElection(long processId) {
+		System.out.println("Election started by process " + processId + ".");
 
 		new Thread(new Runnable() {
 
@@ -148,9 +150,8 @@ public class Ring {
 
 				Process coordinator = getProcessById(processId);
 
-				for (int i = (int) processId + 1; i < getProcesses().size(); i++) {
-					Process processI = getProcesses().get(i);
-					coordinator = Process.higherOf(coordinator, processI);
+				for (Process p : getProcesses()) {
+					coordinator = Process.higherOf(coordinator, p);
 				}
 
 				setCoordinator(coordinator);
@@ -164,9 +165,17 @@ public class Ring {
 	public void announceNewCoordinator(Process newCoordinator) {
 		System.out.println("Process id " + newCoordinator.getId() + " is the new coordinator.");
 	}
-	
+
+	private boolean isCoordinator(Process p) {
+		if (getCoordinator().equals(p)) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public Process getProcessById(long processId) {
-		for (Process process : processes) {
+		for (Process process : getProcesses()) {
 			if (process.getId() == processId) {
 				return process;
 			}
@@ -189,7 +198,7 @@ public class Ring {
 	private Process getRandomProcess() {
 		Random rd = new Random();
 		int random = rd.nextInt(getProcesses().size());
-		Process p = processes.get(random);
+		Process p = getProcesses().get(random);
 
 		return p;
 	}
